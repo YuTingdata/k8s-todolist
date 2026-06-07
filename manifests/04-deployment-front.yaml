@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: stephanparichon/epsi-k8s-front:1.0
+          image: stephanparichon/epsi-k8s-front:2.0
           ports:
             - containerPort: 80
               name: http

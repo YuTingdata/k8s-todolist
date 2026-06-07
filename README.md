@@ -413,4 +413,92 @@ frontend-7d67fbc858-w4xmq   1/1     Running   0          33m
 
 ### Etape 6 - Rolling update à observer
 
+Avant le changement :
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -w
+NAME                        READY   STATUS    RESTARTS   AGE
+backend-74784558f4-w52tl    1/1     Running   0          56m
+frontend-7d67fbc858-pmhmv   1/1     Running   0          45m
+frontend-7d67fbc858-w4xmq   1/1     Running   0          45m
+```
+
+Changement dans `manifests/04-deployment-front.yaml`:
+```
+image: stephanparichon/epsi-k8s-front:1.0
+```
+en 
+```
+image: stephanparichon/epsi-k8s-front:2.0
+```
+
+Application de la config :
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/04-deployment-front.yaml
+deployment.apps/frontend configured
+```
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status deployment/frontend
+Waiting for deployment "frontend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "frontend" rollout to finish: 1 old replicas are pending termination...
+deployment "frontend" successfully rolled out
+```
+
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe deployment frontend
+```
+
+Résultat:
+```
+Name:                   frontend
+Namespace:              default
+CreationTimestamp:      Sun, 07 Jun 2026 21:15:27 +0200
+Labels:                 app=frontend
+Annotations:            deployment.kubernetes.io/revision: 2
+Selector:               app=frontend
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  0 max unavailable, 1 max surge
+Pod Template:
+  Labels:  app=frontend
+  Containers:
+   frontend:
+    Image:      stephanparichon/epsi-k8s-front:2.0
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Limits:
+      cpu:     200m
+      memory:  64Mi
+    Requests:
+      cpu:      50m
+      memory:   32Mi
+    Readiness:  http-get http://:80/health delay=2s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      frontend-config  ConfigMap  Optional: false
+    Environment:       <none>
+    Mounts:            <none>
+  Volumes:             <none>
+  Node-Selectors:      <none>
+  Tolerations:         <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  frontend-7d67fbc858 (0/0 replicas created)
+NewReplicaSet:   frontend-7884b7844c (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  49m   deployment-controller  Scaled up replica set frontend-7d67fbc858 to 2
+  Normal  ScalingReplicaSet  47s   deployment-controller  Scaled up replica set frontend-7884b7844c to 1
+  Normal  ScalingReplicaSet  40s   deployment-controller  Scaled down replica set frontend-7d67fbc858 to 1 from 2
+  Normal  ScalingReplicaSet  40s   deployment-controller  Scaled up replica set frontend-7884b7844c to 2 from 1
+  Normal  ScalingReplicaSet  34s   deployment-controller  Scaled down replica set frontend-7d67fbc858 to 0 from 1
+  ```
+
+(Voir screenshot_app_v2.png)
+![App v2](screenshots/screenshot_app_v2.png)
+
 ### Etape 7 - Tester le Secret avec curl
