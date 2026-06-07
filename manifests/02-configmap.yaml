@@ -1,8 +1,8 @@
 # ============================================================
-# Etape 2 — ConfigMap (FROM SCRATCH)
+# Etape 2 - ConfigMap (FROM SCRATCH)
 # ============================================================
 #
-# Ecrivez ici un objet ConfigMap qui sera consomme par le frontend.
+# DONE : Ecrivez ici un objet ConfigMap qui sera consomme par le frontend.
 # Le frontend (nginx) attend deux variables d'environnement pour
 # savoir comment joindre le backend :
 #
@@ -21,3 +21,10 @@
 # Doc : https://kubernetes.io/docs/concepts/configuration/configmap/
 #
 # ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  BACKEND_HOST: backend
+  BACKEND_PORT: "3000"

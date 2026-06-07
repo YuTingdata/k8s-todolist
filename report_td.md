@@ -158,3 +158,36 @@ admin-token:  15 bytes
 On voit bien qu'un secret nommé 'backend-secret' a été créé, de type 'Opaque', avec 1 data entry.
 
 ## 5. Etape 2 - ConfigMap
+
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/02-configmap.yaml
+configmap/frontend-config created
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get configmap
+NAME               DATA   AGE
+frontend-config    2      15s
+kube-root-ca.crt   1      70m
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe configmap frontend-config
+Name:         frontend-config
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+BACKEND_PORT:
+----
+3000
+
+BACKEND_HOST:
+----
+backend
+
+
+BinaryData
+====
+
+Events:  <none>
+```
+
+On voit bien une configMap nommée `frontend-config`, et les deux clés `BACKEND_PORT` et `BACKEND_HOST`.
+
