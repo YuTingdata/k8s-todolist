@@ -501,4 +501,35 @@ Events:
 (Voir screenshot_app_v2.png)
 ![App v2](screenshots/screenshot_app_v2.png)
 
+
+(Voir screenshot_kubectl_all.png)
+![App v2](screenshots/screenshot_kubectl_all.png)
+
 ### Etape 7 - Tester le Secret avec curl
+
+Sans header, la requete est refusée (erreur 401) :
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> curl.exe -X POST http://localhost:8080/api/admin/clear
+```
+Résultat
+```
+{"error":"Token administrateur invalide ou manquant"}
+```
+
+
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> curl.exe -X POST http://localhost:8080/api/admin/clear -H "X-Admin-Token: s3cr3t-token-td"
+```
+
+```er'd
+{"status":"ok","cleared":5,"message":"5 todo(s) supprimée(s)"}
+```
+
+Avec le bon header: 
+```
+curl.exe -X POST http://localhost:8080/api/admin/clear -H "X-Admin-Token: s3cr3t-token-td"
+```
+
+```
+{"status":"ok","cleared":0,"message":"0 todo(s) supprimée(s)"}
+```
