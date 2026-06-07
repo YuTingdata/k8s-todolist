@@ -533,3 +533,29 @@ curl.exe -X POST http://localhost:8080/api/admin/clear -H "X-Admin-Token: s3cr3t
 ```
 {"status":"ok","cleared":0,"message":"0 todo(s) supprimée(s)"}
 ```
+
+
+## 9. Livrable
+
+```text
+│   prerequis.html
+│   README.md
+│   sujet.html
+│   
+├───manifests
+│       02-configmap.yaml
+│       03-deployment-back.yaml
+│       04-deployment-front.yaml
+│       05-service-back.yaml
+│       06-service-front.yaml
+│       
+└───screenshots
+        screenshot_app_v1.png
+        screenshot_app_v2.png
+        screenshot_kubectl_all.png
+```
+
+## Q1. Que se passe-t-il si vous supprimez manuellement un pod frontend ? Pourquoi ?
+  
+Si je supprime manuellement un pod frontend, Kubernetes en recrée automatiquement un nouveau.
+Cela se produit parce que le pod n’est pas géré seul : il est contrôlé par un Deployment, qui veut maintenir en permanence le nombre de réplicas demandé. Comme le Deployment du frontend est configuré avec 2 replicas, la suppression d’un pod crée un écart entre l’état actuel et l’état désiré, donc Kubernetes lance immédiatement un nouveau pod pour revenir à 2.
