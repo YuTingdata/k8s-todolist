@@ -336,3 +336,81 @@ Events:
   ----    ------             ----  ----                   -------
   Normal  ScalingReplicaSet  101s  deployment-controller  Scaled up replica set frontend-7d67fbc858 to 2
 ```
+
+## Appliquer, tester, mettre à jour
+
+### Etape 5 - Tout appliquer et tester
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get secret backend-secret
+NAME             TYPE     DATA   AGE
+backend-secret   Opaque   1      64m
+```
+
+Application dans cette ordre ( 'unchanged' car déjà appliquer plus tot)
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/02-configmap.yaml
+configmap/frontend-config unchanged
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/05-service-back.yaml
+service/backend unchanged
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/03-deployment-back.yaml
+deployment.apps/backend unchanged
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/04-deployment-front.yaml
+deployment.apps/frontend unchanged
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/06-service-front.yaml
+service/frontend unchanged
+```
+
+Vérification 
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status deployment/backend
+deployment "backend" successfully rolled out
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status deployment/frontend
+deployment "frontend" successfully rolled out
+```
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods,svc,deploy,configmap,secret
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/backend-74784558f4-w52tl    1/1     Running   0          42m
+pod/frontend-7d67fbc858-pmhmv   1/1     Running   0          31m
+pod/frontend-7d67fbc858-w4xmq   1/1     Running   0          31m
+
+NAME                 TYPE           CLUSTER-IP      EXTERNAL-IP                        PORT(S)        AGE
+service/backend      ClusterIP      10.43.246.185   <none>                             3000/TCP       32m
+service/frontend     LoadBalancer   10.43.108.106   172.18.0.3,172.18.0.4,172.18.0.5   80:32418/TCP   31m
+service/kubernetes   ClusterIP      10.43.0.1       <none>                             443/TCP        127m
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/backend    1/1     1            1           42m
+deployment.apps/frontend   2/2     2            2           31m
+
+NAME                         DATA   AGE
+configmap/frontend-config    2      56m
+configmap/kube-root-ca.crt   1      126m
+
+NAME                    TYPE     DATA   AGE
+secret/backend-secret   Opaque   1      69m
+```
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -l app=backend
+NAME                       READY   STATUS    RESTARTS   AGE
+backend-74784558f4-w52tl   1/1     Running   0          43m
+```
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -l app=frontend
+NAME                        READY   STATUS    RESTARTS   AGE
+frontend-7d67fbc858-pmhmv   1/1     Running   0          33m
+frontend-7d67fbc858-w4xmq   1/1     Running   0          33m
+```
+
+(Voir screenshot_app_v1.png)
+![App v1](screenshots/screenshot_app_v1.png)
+
+
+### Etape 6 - Rolling update à observer
+
+### Etape 7 - Tester le Secret avec curl
