@@ -123,3 +123,38 @@ PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste>
 
 Prérequis OK.
 
+# TD Noté - Deploiement Kubernetes
+
+## 4. Etape 1 - Secret
+
+```shell
+kubectl create secret generic backend-secret --from-literal=admin-token=s3cr3t-token-td
+```
+
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl create secret generic backend-secret --from-literal=admin-token=s3cr3t-token-td
+secret/backend-secret created
+```
+
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl create secret generic backend-secret --from-literal=admin-token=s3cr3t-token-td
+secret/backend-secret created
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get secret
+NAME             TYPE     DATA   AGE
+backend-secret   Opaque   1      43s
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe secret backend-secret
+Name:         backend-secret
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  Opaque
+
+Data
+====
+admin-token:  15 bytes
+```
+
+On voit bien qu'un secret nommé 'backend-secret' a été créé, de type 'Opaque', avec 1 data entry.
+
+## 5. Etape 2 - ConfigMap
