@@ -2,7 +2,7 @@
 # Etape 4 — Deployment frontend (FROM SCRATCH)
 # ============================================================
 #
-# Inspirez-vous du fichier "03-deployment-back.yaml" pour ecrire
+# DONE Inspirez-vous du fichier "03-deployment-back.yaml" pour ecrire
 # ce Deployment from scratch.
 #
 # Cahier des charges :
@@ -33,3 +33,46 @@
 #   - https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 #
 # ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: stephanparichon/epsi-k8s-front:1.0
+          ports:
+            - containerPort: 80
+              name: http
+          envFrom:
+            - configMapRef:
+                name: frontend-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi

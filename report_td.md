@@ -254,3 +254,85 @@ Events:
   Normal  ScalingReplicaSet  39s   deployment-controller  Scaled up replica set backend-74784558f4 to 1
 ```
 
+## Etape 7 - Deployment frontend
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/05-service-back.yaml
+service/backend created
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/04-deployment-front.yaml
+deployment.apps/frontend created
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/06-service-front.yaml
+service/frontend created
+```
+
+Verification
+- Rollout OK :
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status deployment/frontend
+deployment "frontend" successfully rolled out
+```
+
+``` On a bien 2 frontend pods, 'running' avec READY 1/1.
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -l app=frontend
+NAME                        READY   STATUS    RESTARTS   AGE
+frontend-7d67fbc858-pmhmv   1/1     Running   0          77s
+frontend-7d67fbc858-w4xmq   1/1     Running   0          77s
+```
+
+Verification que les variables BACKEND_HOST et BACKEND_PORT sont bien injectés dans les pods : 
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -l app=frontend
+NAME                        READY   STATUS    RESTARTS   AGE
+frontend-7d67fbc858-pmhmv   1/1     Running   0          5m33s
+frontend-7d67fbc858-w4xmq   1/1     Running   0          5m33s
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl exec -it frontend-7d67fbc858-w4xmq -- printenv BACKEND_HOST BACKEND_PORT
+backend
+3000
+```
+
+Dans le Deployment, on voit bien le RollingUpdate avec '0 max unavailable, 1 max surge'
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe deployment frontend
+Name:                   frontend
+Namespace:              default
+CreationTimestamp:      Sun, 07 Jun 2026 21:15:27 +0200
+Labels:                 app=frontend
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=frontend
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  0 max unavailable, 1 max surge
+Pod Template:
+  Labels:  app=frontend
+  Containers:
+   frontend:
+    Image:      stephanparichon/epsi-k8s-front:1.0
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Limits:
+      cpu:     200m
+      memory:  64Mi
+    Requests:
+      cpu:      50m
+      memory:   32Mi
+    Readiness:  http-get http://:80/health delay=2s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      frontend-config  ConfigMap  Optional: false
+    Environment:       <none>
+    Mounts:            <none>
+  Volumes:             <none>
+  Node-Selectors:      <none>
+  Tolerations:         <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   frontend-7d67fbc858 (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  101s  deployment-controller  Scaled up replica set frontend-7d67fbc858 to 2
+```
