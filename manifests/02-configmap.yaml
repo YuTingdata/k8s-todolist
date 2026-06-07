@@ -1,0 +1,23 @@
+# ============================================================
+# Etape 2 — ConfigMap (FROM SCRATCH)
+# ============================================================
+#
+# Ecrivez ici un objet ConfigMap qui sera consomme par le frontend.
+# Le frontend (nginx) attend deux variables d'environnement pour
+# savoir comment joindre le backend :
+#
+#   - BACKEND_HOST : nom DNS du Service backend dans le cluster.
+#                    Dans le meme namespace, le nom court du Service suffit
+#                    (resolu par CoreDNS).
+#                    Cf. fichier "05-service-back.yaml" deja fourni.
+#
+#   - BACKEND_PORT : port d'ecoute du Service backend.
+#                    Cf. fichier "05-service-back.yaml" deja fourni.
+#
+# Contraintes :
+#   - nom : "frontend-config"
+#   - deux cles dans la section `data` : BACKEND_HOST et BACKEND_PORT
+#
+# Doc : https://kubernetes.io/docs/concepts/configuration/configmap/
+#
+# ============================================================

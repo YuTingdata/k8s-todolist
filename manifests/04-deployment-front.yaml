@@ -1,0 +1,35 @@
+# ============================================================
+# Etape 4 — Deployment frontend (FROM SCRATCH)
+# ============================================================
+#
+# Inspirez-vous du fichier "03-deployment-back.yaml" pour ecrire
+# ce Deployment from scratch.
+#
+# Cahier des charges :
+#
+#   - nom : frontend
+#   - image : stephanparichon/epsi-k8s-front:1.0
+#   - 2 replicas
+#   - port du conteneur : 80
+#
+#   - Strategie de mise a jour :
+#       type: RollingUpdate
+#       maxUnavailable: 0   (aucun pod indisponible pendant l'update)
+#       maxSurge: 1         (1 pod supplementaire le temps de la transition)
+#
+#   - Variables d'environnement BACKEND_HOST et BACKEND_PORT
+#     injectees depuis la ConfigMap "frontend-config" (envFrom + configMapRef)
+#
+#   - readinessProbe HTTP GET /health sur le port 80
+#       initialDelaySeconds : 2
+#       periodSeconds : 5
+#
+#   - resources :
+#       requests : cpu 50m / memory 32Mi
+#       limits   : cpu 200m / memory 64Mi
+#
+# Doc :
+#   - https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+#   - https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+#
+# ============================================================

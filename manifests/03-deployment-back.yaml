@@ -1,0 +1,59 @@
+# ============================================================
+# Etape 3 — Deployment backend (SQUELETTE A COMPLETER)
+# ============================================================
+#
+# Completez les "# TODO" ci-dessous. Le squelette vous donne la structure
+# attendue ; ne supprimez pas les sections deja remplies (image, resources).
+#
+# Image deja publiee sur Docker Hub : stephanparichon/epsi-k8s-bff:1.0
+# Le backend ECOUTE sur le port 3000 et exige la variable
+# d'environnement ADMIN_TOKEN au demarrage (sinon crash).
+#
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  # TODO : combien de replicas pour le backend ? (cf. enonce)
+  replicas:
+
+  selector:
+    matchLabels:
+      # TODO : selector — doit matcher le label des pods du template
+
+
+  template:
+    metadata:
+      labels:
+        # TODO : label du pod — doit etre coherent avec le selector ci-dessus
+
+
+    spec:
+      containers:
+        - name: backend
+          image: stephanparichon/epsi-k8s-bff:1.0
+          ports:
+            - containerPort: 3000
+              name: http
+
+          # TODO : injecter la variable d'env ADMIN_TOKEN
+          #        depuis le Secret "backend-secret", cle "admin-token"
+          #        (utiliser la syntaxe env / valueFrom / secretKeyRef)
+          env:
+
+
+          # TODO : ajouter une readinessProbe HTTP GET /health sur le port 3000
+          #        - initialDelaySeconds : 3
+          #        - periodSeconds : 5
+
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
