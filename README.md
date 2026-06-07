@@ -3,14 +3,13 @@
 Création du cluster pour le TD
 Environement: Windows
 
-```
+```shell
 k3d cluster create td-k8s --servers 1 --agents 2 --port "8080:80@loadbalancer" --k3s-arg "--disable=traefik@server:0"
 kubectl get nodes
 ```
 
 Ouput:
-```
-PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> k3d cluster create td-k8s --servers 1 --agents 2 --port "8080:80@loadbalancer" --k3s-arg "--disable=traefik@server:0"
+```text
 INFO[0000] portmapping '8080:80' targets the loadbalancer: defaulting to [servers:*:proxy agents:*:proxy] 
 INFO[0000] Prep: Network                                
 INFO[0000] Re-using existing network 'k3d-td-k8s' (53b3bec0318f041c9cdfaafd4adcc8e5926e09d8427738b49445be783d87b427) 
@@ -40,6 +39,8 @@ INFO[0026] You can now use it like this:
 
 ```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get nodes
+```
+```text
 NAME                  STATUS   ROLES                  AGE     VERSION
 k3d-td-k8s-agent-0    Ready    <none>                 5m31s   v1.31.5+k3s1
 k3d-td-k8s-agent-1    Ready    <none>                 5m31s   v1.31.5+k3s1
@@ -48,6 +49,8 @@ k3d-td-k8s-server-0   Ready    control-plane,master   5m37s   v1.31.5+k3s1
 
 ```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> docker ps --filter "name=k3d-td-k8s"
+```
+```
 CONTAINER ID   IMAGE                            COMMAND                  CREATED         STATUS         PORTS                                           NAMES
 e9a9d839d4dc   ghcr.io/k3d-io/k3d-tools:5.8.3   "/app/k3d-tools noop"    6 minutes ago   Up 6 minutes                                                   k3d-td-k8s-tools
 114f601d12b5   ghcr.io/k3d-io/k3d-proxy:5.8.3   "/bin/sh -c nginx-pr…"   6 minutes ago   Up 6 minutes   0.0.0.0:8080->80/tcp, 0.0.0.0:61604->6443/tcp   k3d-td-k8s-serverlb
@@ -56,10 +59,13 @@ e51495f9975d   rancher/k3s:v1.31.5-k3s1         "/bin/k3d-entrypoint…"   6 min
 58cfdbe76996   rancher/k3s:v1.31.5-k3s1         "/bin/k3d-entrypoint…"   6 minutes ago   Up 6 minutes                                                   k3d-td-k8s-server-0
 ```
 
-```
+```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> docker pull stephanparichon/epsi-k8s-bff:1.0
 >> docker pull stephanparichon/epsi-k8s-front:1.0
 >> docker pull stephanparichon/epsi-k8s-front:2.0
+```
+
+```text
 1.0: Pulling from stephanparichon/epsi-k8s-bff
 cf998ddc23af: Pull complete 
 5f49c09562dc: Pull complete 
@@ -91,7 +97,7 @@ Status: Downloaded newer image for stephanparichon/epsi-k8s-front:2.0
 docker.io/stephanparichon/epsi-k8s-front:2.0
 ```
 
-```
+```shell
 k3d image import `
   stephanparichon/epsi-k8s-bff:1.0 `
   stephanparichon/epsi-k8s-front:1.0 `
@@ -99,7 +105,7 @@ k3d image import `
   --cluster td-k8s
 ```
 
-```
+```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl run smoke-nginx --image=nginx:1.27-alpine --port=80 --labels="app=smoke"
 pod/smoke-nginx created
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl expose pod smoke-nginx --type=LoadBalancer --port=80
@@ -113,7 +119,7 @@ service/kubernetes    ClusterIP      10.43.0.1      <none>                      
 service/smoke-nginx   LoadBalancer   10.43.73.166   172.18.0.3,172.18.0.4,172.18.0.5   80:30686/TCP   7s
 ```
 
-```
+```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl delete pod smoke-nginx
 pod "smoke-nginx" deleted
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl delete svc smoke-nginx
@@ -209,8 +215,11 @@ backend-74784558f4-w52tl   1/1     Running   0          31s
 ```
 Nous avons bien 1 pod en status 'Running' et 'READY' a 1/1.
 
+```shell
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe deployment
 ```
-PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe deployment backend
+```text
+backend
 Name:                   backend
 Namespace:              default
 CreationTimestamp:      Sun, 07 Jun 2026 21:04:25 +0200
@@ -256,7 +265,7 @@ Events:
 
 ## Etape 7 - Deployment frontend
 
-```
+```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/05-service-back.yaml
 service/backend created
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/04-deployment-front.yaml
@@ -370,8 +379,10 @@ PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status
 deployment "frontend" successfully rolled out
 ```
 
-```
+```shell
 PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods,svc,deploy,configmap,secret
+```
+```text
 NAME                            READY   STATUS    RESTARTS   AGE
 pod/backend-74784558f4-w52tl    1/1     Running   0          42m
 pod/frontend-7d67fbc858-pmhmv   1/1     Running   0          31m
