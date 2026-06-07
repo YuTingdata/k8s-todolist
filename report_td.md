@@ -191,3 +191,66 @@ Events:  <none>
 
 On voit bien une configMap nommée `frontend-config`, et les deux clés `BACKEND_PORT` et `BACKEND_HOST`.
 
+## 6. Etape 3 - Déploiement backend
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl apply -f manifests/03-deployment-back.yaml
+deployment.apps/backend created
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl rollout status deployment/backend
+Waiting for deployment "backend" rollout to finish: 0 of 1 updated replicas are available...
+deployment "backend" successfully rolled out
+```
+Le rollout est complet
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl get pods -l app=backend
+NAME                       READY   STATUS    RESTARTS   AGE
+backend-74784558f4-w52tl   1/1     Running   0          31s
+```
+Nous avons bien 1 pod en status 'Running' et 'READY' a 1/1.
+
+```
+PS C:\Users\yutin\OneDrive\Bureau\Workplace\td-todoliste> kubectl describe deployment backend
+Name:                   backend
+Namespace:              default
+CreationTimestamp:      Sun, 07 Jun 2026 21:04:25 +0200
+Labels:                 app=backend
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=backend
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=backend
+  Containers:
+   backend:
+    Image:      stephanparichon/epsi-k8s-bff:1.0
+    Port:       3000/TCP
+    Host Port:  0/TCP
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+    Requests:
+      cpu:      50m
+      memory:   64Mi
+    Readiness:  http-get http://:3000/health delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      ADMIN_TOKEN:  <set to the key 'admin-token' in secret 'backend-secret'>  Optional: false
+    Mounts:         <none>
+  Volumes:          <none>
+  Node-Selectors:   <none>
+  Tolerations:      <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   backend-74784558f4 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  39s   deployment-controller  Scaled up replica set backend-74784558f4 to 1
+```
+
